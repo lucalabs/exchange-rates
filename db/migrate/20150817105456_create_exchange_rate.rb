@@ -1,4 +1,4 @@
-class CreateSpreeExchangeRate < ActiveRecord::Migration
+class CreateExchangeRate < ActiveRecord::Migration
   def change
     create_table 'exchange_rates', force: true do |t|
       t.date 'rate_date'
