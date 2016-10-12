@@ -11,8 +11,13 @@ task update_exchange_rate: :environment do
     current = ExchangeRate.new
     current.rate_date = Date.today
   end
-  current.eur = Money.default_bank.exchange(10000, 'EUR', 'NOK').cents / 10000.0
-  current.usd = Money.default_bank.exchange(10000, 'USD', 'NOK').cents / 10000.0
+
+  ExchangeRate.available_rates.select {|rate| rate != :nok }.each do |rate_name|
+    # rate = Money.default_bank.exchange(10000, rate.to_s, 'NOK').cents / 10000.0
+    rate = Money.default_bank.get_rate('EUR', 'NOK') / Money.default_bank.get_rate('EUR', rate_name.to_s)
+    current.send("#{rate_name}=", rate)
+
+  end
   current.save!
 
   puts 'Updated exchange rate table'
