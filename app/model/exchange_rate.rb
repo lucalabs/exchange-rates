@@ -11,6 +11,12 @@ class ExchangeRate < ActiveRecord::Base
      :nzd, :php, :sgd, :thb, :zar]
   end
 
+  def self.available_rates_params
+    available_rates
+        .map(&:to_s)
+        .join(',')
+  end
+
   def nok
     1.0
   end

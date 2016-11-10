@@ -18,6 +18,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'money', '>= 6.0.0'
   s.add_dependency 'eu_central_bank', '>= 0.4.0'
+  s.add_dependency 'rest-client', '~> 2.0'
 
   s.add_development_dependency 'capybara', '~> 2.4'
   s.add_development_dependency 'database_cleaner'
