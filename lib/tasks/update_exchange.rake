@@ -14,9 +14,8 @@ task update_exchange_rate: :environment do
 
   ExchangeRate.available_rates.select { |rate| rate != :nok }.each do |rate_name|
     # rate = Money.default_bank.exchange(10000, rate.to_s, 'NOK').cents / 10000.0
-    rate = Money.default_bank.get_rate('EUR', 'NOK') / Money.default_bank.get_rate('EUR', rate_name.to_s)
+    rate = Money.default_bank.get_rate('EUR', 'NOK') / Money.default_bank.get_rate('EUR', rate_name.to_s.upcase!)
     current.send("#{rate_name}=", rate)
-
   end
   current.save!
 
