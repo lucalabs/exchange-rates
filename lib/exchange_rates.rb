@@ -1,5 +1,6 @@
 require 'money'
 require 'eu_central_bank'
+require 'money/bank/google_currency'
 require 'exchange_rates/engine'
 require 'exchange_rates/money_decorator'
 require 'exchange_rates/exchange_rate_factory'

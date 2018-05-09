@@ -2,8 +2,10 @@ desc 'Update exchange rate'
 task update_exchange_rate: :environment do
   require 'money'
   require 'eu_central_bank'
+  require 'money/bank/google_currency'
 
   Money.default_bank = EuCentralBank.new
+  google_bank = Money::Bank::GoogleCurrency.new
   Money.default_bank.update_rates
 
   current = ExchangeRate.find_by_rate_date(Date.today)
@@ -14,7 +16,11 @@ task update_exchange_rate: :environment do
 
   ExchangeRate.available_rates.select { |rate| rate != :nok }.each do |rate_name|
     # rate = Money.default_bank.exchange(10000, rate.to_s, 'NOK').cents / 10000.0
+    begin
     rate = Money.default_bank.get_rate('EUR', 'NOK') / Money.default_bank.get_rate('EUR', rate_name.to_s.upcase!)
+    rescue
+      rate = Money.default_bank.get_rate('EUR', 'NOK') / google_bank.get_rate('EUR', rate_name.to_s.upcase!)
+    end
     current.send("#{rate_name}=", rate)
   end
   current.save!
