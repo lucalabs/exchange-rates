@@ -8,7 +8,7 @@ class ExchangeRate < ActiveRecord::Base
     [:nok, :eur, :usd, :jpy, :bgn, :czk, :dkk, :gbp, :huf,
      :pln, :ron, :sek, :chf, :hrk, :rub, :try, :aud, :brl,
      :cad, :cny, :hkd, :idr, :ils, :inr, :krw, :mxn, :myr,
-     :nzd, :php, :sgd, :thb, :zar]
+     :nzd, :php, :sgd, :thb, :zar, :isk]
   end
 
   def self.available_rates_params
