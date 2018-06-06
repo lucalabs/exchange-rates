@@ -2,7 +2,7 @@
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'exchange_rates'
-  s.version     = '0.1.5'
+  s.version     = '0.1.6'
   s.summary     = 'Adds exchange rates to spree'
   s.description = 'Adds exchange rates to spree'
   s.required_ruby_version = '>= 2.0.0'
@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'money', '>= 6.0.0'
   s.add_dependency 'eu_central_bank', '>= 0.4.0'
-  s.add_dependency 'google_currency'
+  s.add_dependency 'money-open-exchange-rates'
   s.add_dependency 'rest-client', '~> 2.0'
 
   s.add_development_dependency 'capybara', '~> 2.4'

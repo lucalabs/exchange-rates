@@ -2,11 +2,20 @@ desc 'Update exchange rate'
 task update_exchange_rate: :environment do
   require 'money'
   require 'eu_central_bank'
-  require 'money/bank/google_currency'
+  require 'money/bank/open_exchange_rates_bank'
 
-  Money.default_bank = EuCentralBank.new
-  google_bank = Money::Bank::GoogleCurrency.new
-  Money.default_bank.update_rates
+  eu_bank = EuCentralBank.new
+  eu_bank.update_rates
+
+  if ENV['OPEN_EXCHANGE_API_KEY'].present?
+    open_bank = Money::Bank::OpenExchangeRatesBank.new
+    open_bank.app_id = ENV['OPEN_EXCHANGE_API_KEY']
+    open_bank.update_rates
+  else
+    Rails.logger.warn("OPEN_EXCHANGE_API_KEY not set, can not use Open Exchange to update exchange rates")
+    open_bank = nil
+  end
+
 
   current = ExchangeRate.find_by_rate_date(Date.today)
   if current.nil?
@@ -17,9 +26,13 @@ task update_exchange_rate: :environment do
   ExchangeRate.available_rates.select { |rate| rate != :nok }.each do |rate_name|
     # rate = Money.default_bank.exchange(10000, rate.to_s, 'NOK').cents / 10000.0
     begin
-    rate = Money.default_bank.get_rate('EUR', 'NOK') / Money.default_bank.get_rate('EUR', rate_name.to_s.upcase!)
+      rate = eu_bank.get_rate('EUR', 'NOK') / eu_bank.get_rate('EUR', rate_name.to_s.upcase!)
     rescue
-      rate = Money.default_bank.get_rate('EUR', 'NOK') / google_bank.get_rate('EUR', rate_name.to_s.upcase!)
+      rate = if open_bank.nil?
+               1
+             else
+               eu_bank.get_rate('EUR', 'NOK') / open_bank.get_rate('EUR', rate_name.to_s.upcase!)
+             end
     end
     current.send("#{rate_name}=", rate)
   end
