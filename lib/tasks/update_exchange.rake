@@ -34,11 +34,20 @@ task update_exchange_rate: :environment do
                eu_bank.get_rate('EUR', 'NOK') / open_bank.get_rate('EUR', rate_name.to_s.upcase!)
              end
     end
-    current.send("#{rate_name}=", rate)
+
+    number_parts = rate.to_s.split('.')
+    if number_parts.first.size <= ExchangeRate::PRECISION - ExchangeRate::SCALE
+      current.send("#{rate_name}=", rate)
+    else
+      @errors ||= {}
+      @errors[rate_name] = rate.to_s
+    end
   end
   current.save!
 
   puts 'Updated exchange rate table'
+
+  puts "WARNING: Values wasn't saved. Too big values in: #{@errors}" if @errors
   # puts TurnkeyUpdater.send_data({items: [{label:'eur', value: '%.4f' % current.eur}, {label:'usd',value:'%.4f' % current.usd}]}, 'currency')
 end
 
@@ -59,7 +68,7 @@ task :weekly_rates_by_year, [:year] => :environment do |t, args|
       rate = ExchangeRate.find_by_rate_date(date) || ExchangeRate.new(rate_date: date)
       quotes = ExchangeRates::CurrencyLayer.new.historical_data(date)
       quotes.each do |key, quote|
-        rate.send("#{key.sub('USD', '').downcase}=", BigDecimal.new(quote, 6))
+        rate.send("#{key.sub('USD', '').downcase}=", BigDecimal(quote, 6))
       end
 
       rate.save!
