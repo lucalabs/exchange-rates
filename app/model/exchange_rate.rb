@@ -4,6 +4,9 @@ class ExchangeRate < ActiveRecord::Base
     where('rate_date <= ?', before).order('rate_date DESC').limit(limit)
   end
 
+  PRECISION = 12
+  SCALE = 6
+
   def self.available_rates
     [:nok, :eur, :usd, :jpy, :bgn, :czk, :dkk, :gbp, :huf,
      :pln, :ron, :sek, :chf, :hrk, :rub, :try, :aud, :brl,
@@ -13,17 +16,17 @@ class ExchangeRate < ActiveRecord::Base
      :bhd, :bif, :bmd, :bnd, :tnd, :bob, :bsd, :btn, :bwp,
      :byn, :bzd, :uah, :cdf, :clp, :clf, :cnh, :cop, :crc,
      :cuc, :cup, :cve, :djf, :dop, :dzd, :egp, :ern, :etb,
-     :fjd, :fkp, :gel, :ggp, :ghs, :ghs, :gip, :gmd, :gnf,
-     :gtq, :gyd, :hnl, :htg, :imp, :iqd, :irr, :jep, :jmd,
-     :jod, :kes, :kgs, :khr, :kmf, :kpw, :kwd, :kyd, :kzt,
-     :lak, :lbp, :lkr, :lrd, :lsl, :lyd, :mad, :mdl, :mga,
-     :mkd, :mmk, :mnt, :mop, :mro, :mur, :mvr, :mwk, :mzn,
-     :nad, :ngn, :nio, :npr, :omr, :pab, :pen, :pgk, :pkr,
-     :pyg, :qar, :rsd, :rwf, :sar, :sbd, :scr, :sdg, :shp,
-     :sll, :sos, :srd, :ssp, :std, :svc, :syp, :szl, :tjs,
-     :tmt, :tnd, :top, :ttd, :twd, :tzs, :uah, :ugx, :uyu,
-     :uzs, :vef, :vnd, :vuv, :wst, :xaf, :xag, :xau, :xcd,
-     :xdr, :xof, :xpd, :xpf, :xpt, :yer, :zmw, :zwl]
+     :fjd, :fkp, :gel, :ggp, :ghs, :gip, :gmd, :gnf, :gtq,
+     :gyd, :hnl, :htg, :imp, :iqd, :irr, :jep, :jmd, :jod,
+     :kes, :kgs, :khr, :kmf, :kpw, :kwd, :kyd, :kzt, :lak,
+     :lbp, :lkr, :lrd, :lsl, :lyd, :mad, :mdl, :mga, :mkd,
+     :mmk, :mnt, :mop, :mro, :mur, :mvr, :mwk, :mzn, :nad,
+     :ngn, :nio, :npr, :omr, :pab, :pen, :pgk, :pkr, :pyg,
+     :qar, :rsd, :rwf, :sar, :sbd, :scr, :sdg, :shp, :sll,
+     :sos, :srd, :ssp, :std, :svc, :syp, :szl, :tjs, :tmt,
+     :top, :ttd, :twd, :tzs, :ugx, :uyu, :uzs, :vef, :vnd,
+     :vuv, :wst, :xaf, :xag, :xau, :xcd, :xdr, :xof, :xpd,
+     :xpf, :xpt, :yer, :zmw, :zwl]
     # No exchange rates or discontinued rates:
     # :byr  Belarusian ruble, now uses BYN
     # :eek  Estonian kroon, now uses EUR
