@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.requirements << 'none'
 
   s.add_dependency 'money', '>= 6.0.0'
-  s.add_dependency 'eu_central_bank', '>= 0.4.0'
+  s.add_dependency 'eu_central_bank', '>= 1.5.0'
   s.add_dependency 'money-open-exchange-rates'
   s.add_dependency 'rest-client', '~> 2.0'
 
