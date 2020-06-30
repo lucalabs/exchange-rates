@@ -2,7 +2,7 @@
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'exchange_rates'
-  s.version     = '0.1.7'
+  s.version     = '0.1.8'
   s.summary     = 'Adds exchange rates to spree'
   s.description = 'Adds exchange rates to spree'
   s.required_ruby_version = '>= 2.0.0'
