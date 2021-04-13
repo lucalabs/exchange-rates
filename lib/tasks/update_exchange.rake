@@ -26,8 +26,8 @@ namespace :exchange_rate do
       # rate = Money.default_bank.exchange(10000, rate.to_s, 'NOK').cents / 10000.0
       begin
         rate = eu_bank.get_rate('EUR', 'NOK') / eu_bank.get_rate('EUR', rate_name.to_s.upcase!)
-      rescue
-        rate = if open_bank.nil?
+      rescue => e
+        rate = if open_bank.nil? || e.is_a?(CurrencyUnavailable)
                  1
                else
                  eu_bank.get_rate('EUR', 'NOK') / open_bank.get_rate('EUR', rate_name.to_s.upcase!)
