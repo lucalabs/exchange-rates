@@ -16,7 +16,7 @@ Bundle your dependencies and run the installation generator:
 
 ```shell
 bundle
-bundle exec rails g exchange_rate:install
+bundle exec rails g exchange_rates:install
 ```
 
 Testing
