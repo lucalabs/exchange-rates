@@ -1,6 +1,7 @@
 class UpdateExchangeRatesJob < ActiveJob::Base
   def perform
-    eu_bank = EuCentralBank.new; eu_bank.update_rates
+    eu_bank = EuCentralBank.new
+    eu_bank.update_rates
 
     if ENV['OPEN_EXCHANGE_API_KEY'].present?
       open_bank = Money::Bank::OpenExchangeRatesBank.new
@@ -18,16 +19,7 @@ class UpdateExchangeRatesJob < ActiveJob::Base
     end
 
     ExchangeRate.available_rates.select { |rate| rate != :nok }.each do |rate_name|
-      # rate = Money.default_bank.exchange(10000, rate.to_s, 'NOK').cents / 10000.0
-      begin
-        rate = eu_bank.get_rate('EUR', 'NOK') / eu_bank.get_rate('EUR', rate_name.to_s.upcase!)
-      rescue => e
-        rate = if open_bank.nil? || e.is_a?(CurrencyUnavailable)
-                 1
-               else
-                 eu_bank.get_rate('EUR', 'NOK') / open_bank.get_rate('EUR', rate_name.to_s.upcase!)
-               end
-      end
+      rate = fetch_rate(eu_bank: eu_bank, open_bank: open_bank, rate_name: rate_name)
 
       number_parts = rate.to_s.split('.')
       if number_parts.first.size <= ExchangeRate::PRECISION - ExchangeRate::SCALE
@@ -42,5 +34,21 @@ class UpdateExchangeRatesJob < ActiveJob::Base
     puts 'Updated exchange rate table'
 
     puts "WARNING: Values wasn't saved. Too big values in: #{@errors}" if @errors
+  end
+
+  def fetch_rate(eu_bank:, open_bank:, rate_name:)
+    begin
+      eu_bank.get_rate('EUR', 'NOK') / eu_bank.get_rate('EUR', rate_name.to_s.upcase!)
+    rescue => _e # Happens on unknown currency, let's use open_bank if available
+      if open_bank.nil?
+        1
+      else
+        begin
+          eu_bank.get_rate('EUR', 'NOK') / open_bank.get_rate('EUR', rate_name.to_s.upcase!)
+        rescue => _e
+          1
+        end
+      end
+    end
   end
 end
